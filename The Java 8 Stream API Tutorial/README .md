@@ -82,6 +82,23 @@ Files.lines(path, Charset.forName("UTF-8"));
 ```
 
 ### 3. Referencing a Stream
+중간 연산자를 호출 하는 동안은 stream을 인스턴스화 할 수 접근가능한 참조를 가질 수 있습니다. 최종 연산 실행할때는 stream에 접근이 불가능하다.
+
+이 것을 증명하기 위해서, 잠시동안 베스트 프랙티스가 명령어가 순서대로 이어지는 것을 잊어보자. 이것은 불필요하게 장황할 뿐만아니라, 일반적으로 아래 코드만이 유효하다.
+```java
+Stream<String> stream = Stream.of("a", "b", "c").filter(element -> element.contains("b"));
+Optional<String> anyElement = stream.findAny();
+```
+하지만 최종 연산 호출 후에 같은 참조를 재사용하기 위한 시도는 _IllegalStateException_ 를 발생시킬 것이다:
+```java
+Optional<String> firstElement = stream.findFirst();
+```
+_IllegalStateException_ 이 RuntimeException이기 때문에 컴파일러는 이 문제를 문제삼지 않을 것이다. 그래서 **Java8 Stream을 재사용할 수 없다 는 것을 기억하는게 중요하다.**
+
+    
+
+    
+    
 
 ### 4. Stream Pipeline
 
