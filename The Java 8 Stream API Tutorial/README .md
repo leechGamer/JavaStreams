@@ -56,12 +56,18 @@ Stream<Integer> streamIterated = Stream.iterate(40, n -> n+2).limit(20);
 stream결과에 대한 첫번째 원소는 iterate함수의 첫번째 parameter이다. 모든 뒤따르는 원소를 생성할 때, 명시된 함수는 앞에 있는 원소로 적용된다. 
 예를 들어 위 코드의 두번째 원소는 42일 것이다.
     
-#### 2.7. Stream of Primitives
+#### 2.7. Stream of Primitive
+자바8은 3가지 종류의 원시타입에 대한 stream을 생성할 수 있다: int, long, double.
+Stream<T>는 generic 인터페이스이고 원시를 타입parameter로써 generic으로 사용할 수 있는 방법이 없기 때문에 
+**IntStream, LongStream, DoubleStream** 이 특별한 인터페이스가 생성되었다. 
+이 새로운 interface들은 불필요한 auto-boxing을 안하게 하면서 생산성을 높였다.
+    
 ```java
 IntStream intStream = IntStream.range(1, 3);
 LongStream longStream = LongStream.rangeClosed(1, 3);
 ```
-    
+
+자바8에서 부터, Random class가 원시 stream을 생성하기 위한 넓은 범위의 함수를 공급한다. 예를 들어 아래 코드는 DoubleStream을 만들고 이것은 3의 원소를 갖고 있다.
 ```java
 Random random = new Random();
 DoubleStream doubleStream = random.doubles(3);
@@ -82,9 +88,9 @@ Files.lines(path, Charset.forName("UTF-8"));
 ```
 
 ### 3. Referencing a Stream
-중간 연산자를 호출 하는 동안은 stream을 인스턴스화 할 수 접근가능한 참조를 가질 수 있다. 최종 연산 실행할때는 stream에 접근이 불가능하다.
+중간 연산자를 호출 하는 동안은 stream을 인스턴스화 할 수 있고 접근가능한 참조를 가질 수 있다. 최종 연산 실행할때는 stream에 접근이 불가능하다.
 
-이 것을 증명하기 위해서, 잠시동안 베스트 프랙티스가 명령어가 순서대로 이어지는 것을 잊어보자. 이것은 불필요하게 장황할 뿐만아니라, 일반적으로 아래 코드만이 유효하다.
+이 것을 증명하기 위해서, 잠시동안 베스트 프랙티스에서 명령어가 순서대로 이어지는 것을 잊어보자. 이것은 불필요하게 장황할 뿐만아니라, 일반적으로 아래 코드만이 유효하다.
 ```java
 Stream<String> stream = Stream.of("a", "b", "c").filter(element -> element.contains("b"));
 Optional<String> anyElement = stream.findAny();
@@ -93,7 +99,7 @@ Optional<String> anyElement = stream.findAny();
 ```java
 Optional<String> firstElement = stream.findFirst();
 ```
-_IllegalStateException_ 이 RuntimeException이기 때문에 컴파일러는 이 문제를 문제 삼지 않을 것이다. 그래서 **Java8 Stream을 재사용할 수 없다 는 것을 기억하는게 중요하다.**
+_IllegalStateException_ 이 RuntimeException이기 때문에 컴파일러는 이 문제를 문제 삼지 않을 것이다. 그래서 **Java8 Stream을 재사용할 수 없다는 것을 기억하는게 중요하다.**
 이런 종류의 동작은 논리적으로 동작한다. 그래서 원소를 저장하지 않고 함수형 스타일에서의 원소에 관련하 소스가 유한한 순서로 동작될 수 있게 설계한다. 그래서 앞의 코드를 적절하게 동작하게 하기 위해서 아래와 같이 만들어야 한다.
 ```java
 List<String> elements = Stream.of("a", "b", "c").filter(element -> element.contains("b")).collect(Collectors.toList());
