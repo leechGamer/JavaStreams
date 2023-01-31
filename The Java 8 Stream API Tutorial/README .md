@@ -93,13 +93,15 @@ Optional<String> anyElement = stream.findAny();
 ```java
 Optional<String> firstElement = stream.findFirst();
 ```
-_IllegalStateException_ 이 RuntimeException이기 때문에 컴파일러는 이 문제를 문제삼지 않을 것이다. 그래서 **Java8 Stream을 재사용할 수 없다 는 것을 기억하는게 중요하다.**
+_IllegalStateException_ 이 RuntimeException이기 때문에 컴파일러는 이 문제를 문제 삼지 않을 것이다. 그래서 **Java8 Stream을 재사용할 수 없다 는 것을 기억하는게 중요하다.**
+이런 종류의 동작은 논리적으로 동작한다. 그래서 원소를 저장하지 않고 함수형 스타일에서의 원소에 관련하 소스가 유한한 순서로 동작될 수 있게 설계한다. 그래서 앞의 코드를 적절하게 동작하게 하기 위해서 아래와 같이 만들어야 한다.
+```java
+List<String> elements = Stream.of("a", "b", "c").filter(element -> element.contains("b")).collect(Collectors.toList());
 
+Optional<String> anyElement = elements.stream().findAny();
+Optional<String> firstElement = elements.stream().findFirst();
+```
     
-
-    
-    
-
 ### 4. Stream Pipeline
 
 ### 5. Lazy Invocation
