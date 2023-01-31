@@ -109,7 +109,21 @@ Optional<String> firstElement = elements.stream().findFirst();
 ```
     
 ### 4. Stream Pipeline
+데이터 소스의 원소에 대해서 명령을 수행하고 결과를 합치려면 3부분이 필요한데: source, 중간 연산자, 최종 연산자.
+    
+중간 연산자는 새로운 수정된 stream을 리턴한다. 예를 들어 원소 없이 기존 스트림에 대한 새로운 stream을 생성하기 위해서는 _skip()_ 함수가 쓰여져야 한다.
+```java
+Stream<String> onceModifiedStream = Stream.of("abcd", "bbcd", "cbcd").skip(1);
+```
+만약 한번 이상의 수정이 필요하면, 중간 연산자를 연결할 수 있다. 현재 Stream<String>의 모든 원소를 대상으로 첫번째 몇 글자를 바꿔야 하는게 필요하다고 가정해보자. 아래와 같이 _skip()_ , _map()_ 함수로 연결할 수 있다: 
+```java
+Stream<String> twiceModifiedStream = stream.skip(1).map(element -> element.substring(0, 3));
+```
+map() 함수는 파라미터로써 람다표현을 가져간다. 만약 람다에 대해서 더 공부하길 원하면 이 튜토리얼을 확인하라 [Lambda Expressions and Functional Interfaces: Tips and Best Practices.](https://www.baeldung.com/java-8-streams#5-streamgenerate)
 
+stream 그 자체로써는 의미가 없다; 유저는 최종 연산에 흥미를 가진다. 그리고 이것은 어떤 타입의 값이 되거나 스트림의 모든 원소에 적용되는 작업이다.
+stream을 사용하는 정확하고 가장 편리한 방법은 stream source, 중간연산자 그리고 최종연산자의 체인인 stream pipeline을 사용하는 것이다.
+    
 ### 5. Lazy Invocation
 
 ### 6. Order of Execution
