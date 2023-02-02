@@ -125,9 +125,56 @@ stream 그 자체로써는 의미가 없다; 유저는 최종 연산에 흥미�
 stream을 사용하는 정확하고 가장 편리한 방법은 stream source, 중간연산자 그리고 최종연산자의 체인인 stream pipeline을 사용하는 것이다.
     
 ### 5. Lazy Invocation
+ **중간연산자는 게으르다.** 이 의미는 최종 연산자의 필요할 때만 발생될 것이라는 것이다. 예를 들어 _wasCalled()_라는 함수를 호출한다고 하자. 여기서 함수 안에 있는 카운터는 매번 호출할때 마다 값이 증가한다.
+```java
+private long counter;
 
+private void wasCalled() {
+    counter++;
+}
+```
+이제 filter()에서 _wasCalled()_ 함수를 호출해보자.
+```java
+List<String> list = Arrays.asList("abc", "abc2", "abc3");
+counter = 0;
+Stream<String> stream = list.stream().filter(element -> {
+    wasCalled();
+    return element.contains("2");
+});
+```
+소스에 3개의 원소가 들어있기 때문에 filter함수는 3번 호출될 것이고 counter 변수는 3이 될 것이라고 추정할 것이다. 그러나 이 코드를 돌려보면 counter변수는 전혀바뀌지 않았다. 여전히 0이다. 그래서 filter() 함수는 한번도 불리지 않았다. 그 이유는 최종 연산자를 빼먹었기 때문이다.
+    
+다시 코드를 map()연산자 그리고 최종연산자인 findFirst()를 더해서 작성해보자. 또 메서드 호출 순서를 추적할 수 있는 기능을 로깅을 통해 추가할 것이다.
+```java
+ Optional<String> stream = list.stream().filter(element -> {
+            log.info("filter() was called" );
+            return element.contains("2");
+        }).map(element -> {
+            log.info("map() was called");
+            return element.toUpperCase();
+        }).findFirst();
+```
+결과 로그가 filter()가 2번 호출되고 map()함수가 1번 호출되는 것을 볼 수 있다.
+왜냐면 파이프라인이 수직적으로 수행되기 때문이다. 위 코드를 보면 스트임의 첫번째 원소는 filter의 predicate를 만족하지 못했다. filter 함수가 두번째 원소에서 발생했고 filter를 통과했다. 3번째 원소를 호출하지 않고 파이프라인을 통해 map()함수로 갔다.
+
+findFirst() 연산자는 한가지 원소만 만족시킨다. 그래서 이 예제에서 지연 호출은 2개의 함수를 호출하는 것을 피할 수 있게 해준다. (filter에 관련된 호출 한번, map()에 관련된 호출 한번)
 ### 6. Order of Execution
+퍼포먼스적인 관점에서 올바른 순서는 스트림 파이프라인의 체이닝 오퍼레이션 측면에서 가장 중요한 것 중 하나이다.
+```java
+long size = list.stream().map(element -> {
+    wasCalled();
+    return element.substring(0, 3);
+}).skip(2).count();
+```
+이 코드 실행은 counter 값을 3만큼 증가시킬 것이다. 이 의미는 stream의 map()함수를 3번 호출한다는 것이다. 하지만 size 값은 1이다. 그래서 결과 stream에는 원소 하나 밖에 남지 않고 비싼 map()함수를 이유도 없이 3번 중 2번을 호출했다.
 
+만약 skip()과 map()함수에 대한 순서를 바꾼다면 counter는 1이 될 것이다. 그래서 map()함수도 한번만 호출될 것이다.
+```java
+long size = list.stream().skip(2).map(element -> {
+    wasCalled();
+    return element.substring(0, 3);
+}).count();
+```이 것을 통해서 가져올 수 있는 룰: 스트림의 사이즈를 줄일 수 있는 중간연산자는 각 원소들에 적용되는 연산자 전에 위치되어야 한다. 그래서 skip,  filter, distinct와 같은 함수를 스트림 파이프라인의 위쪽에 둬야한다.
 ### 7. Stream Reduction
 
 ### 8. Parallel Streams
