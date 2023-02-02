@@ -174,7 +174,8 @@ long size = list.stream().skip(2).map(element -> {
     wasCalled();
     return element.substring(0, 3);
 }).count();
-```이 것을 통해서 가져올 수 있는 룰: 스트림의 사이즈를 줄일 수 있는 중간연산자는 각 원소들에 적용되는 연산자 전에 위치되어야 한다. 그래서 skip,  filter, distinct와 같은 함수를 스트림 파이프라인의 위쪽에 둬야한다.
+```
+이 것을 통해 가져올 수 있는 룰: 스트림의 사이즈를 줄일 수 있는 중간연산자는 각 원소들에 적용되는 연산자 전에 위치되어야 한다. 그래서 skip,  filter, distinct와 같은 함수를 스트림 파이프라인의 위쪽에 둬야한다.
 ### 7. Stream Reduction
 
 ### 8. Parallel Streams
