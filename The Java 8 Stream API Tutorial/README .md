@@ -177,6 +177,7 @@ long size = list.stream().skip(2).map(element -> {
 ```
 이 것을 통해 가져올 수 있는 룰: 스트림의 사이즈를 줄일 수 있는 중간연산자는 각 원소들에 적용되는 연산자 전에 위치되어야 한다. 그래서 skip,  filter, distinct와 같은 함수를 스트림 파이프라인의 위쪽에 둬야한다.
 ### 7. Stream Reduction
+Stream API는 stram을 타입이나 원시로 모으는 최종연산자를 많이 갖고 있다: count(), max(), min() 그리고 sum(). 그러나 그 연산자들은 미리정의된 구현에 의해서 동작한다.
 
 ### 8. Parallel Streams
 
