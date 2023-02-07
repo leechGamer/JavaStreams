@@ -177,9 +177,14 @@ long size = list.stream().skip(2).map(element -> {
 ```
 이 것을 통해 가져올 수 있는 룰: 스트림의 사이즈를 줄일 수 있는 중간연산자는 각 원소들에 적용되는 연산자 전에 위치되어야 한다. 그래서 skip,  filter, distinct와 같은 함수를 스트림 파이프라인의 위쪽에 둬야한다.
 ### 7. Stream Reduction
-Stream API는 stram을 타입이나 원시로 모으는 최종연산자를 많이 갖고 있다: count(), max(), min() 그리고 sum(). 그러나 그 연산자들은 미리정의된 구현에 의해서 동작한다.
+Stream API는 stram을 타입이나 원시로 모으는 최종연산자를 많이 갖고 있다: count(), max(), min() 그리고 sum(). 그러나 그 연산자들은 미리정의된 구현에 의해서 동작한다. 그렇다면 만약 개발자들이 스트림의 축소 매커니즘을 커스터마이즈해야한다면 어떻게 해야할까? 2가지 방법이 있는데, reduce() 와 collect() 메소드를 사용할 수 있다. 
+    
+### 7.1 reduce() 함수
+### 7.2 collect() 함수
+    
 
 ### 8. Parallel Streams
-
+자바8 이전에 병렬처리하기 복잡했었다. 
+    
 ### 9. Conclusion
 
