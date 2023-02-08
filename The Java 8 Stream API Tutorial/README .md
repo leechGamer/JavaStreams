@@ -201,19 +201,19 @@ reducedTwoParams = 16(10 + 1 + 2 + 3)
 
 ```java
 int reducedParams = Stream.of(1, 2, 3)
-								  .reduce(10, (a, b) -> a + b, (a, b) -> {
-									  log.info("combiner was called");
-									  return a + b;
-								  });
+	.reduce(10, (a, b) -> a + b, (a, b) -> {
+		  log.info("combiner was called");
+		  return a + b;
+	});
 ```
 이 결과는 앞에 있는 코드와 같은 결과 16이 나온다 .그리고 로그도 안찍힌다. 이 말은 즉 combiner가 호출되지 않았다는 것이다. combiner를 동작하게 하기 위해 stream이 병렬이 되어야 한다.
     
 ```java
 int reducedParams = Arrays.asList(1, 2, 3).parallelStream()
-								  .reduce(10, (a, b) -> a + b, (a, b) -> {
-									  log.info("combiner was called");
-									  return a + b;
-								  });
+	.reduce(10, (a, b) -> a + b, (a, b) -> {
+		  log.info("combiner was called");
+		  return a + b;
+	});
 ```
 이 
 ### 7.2 collect() 함수
