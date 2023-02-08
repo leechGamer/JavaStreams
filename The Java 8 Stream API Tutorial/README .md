@@ -180,6 +180,42 @@ long size = list.stream().skip(2).map(element -> {
 Stream API는 stram을 타입이나 원시로 모으는 최종연산자를 많이 갖고 있다: count(), max(), min() 그리고 sum(). 그러나 그 연산자들은 미리정의된 구현에 의해서 동작한다. 그렇다면 만약 개발자들이 스트림의 축소 매커니즘을 커스터마이즈해야한다면 어떻게 해야할까? 2가지 방법이 있는데, reduce() 와 collect() 메소드를 사용할 수 있다. 
     
 ### 7.1 reduce() 함수
+이 메소드에 대해서 3가지 변형이 있다. 이것은 시그니처와 반환 타입에 따라 다르다. 
+이것들은 아래와 같은 파라미터를 가질 수 있다:
+- identity
+    만약 stream이 비어있고 쌓일 것이 없다면 accumulator의 초기값 또는 기본값이다.
+- accumulator
+    이 함수는 원소 집합 로직에 대한 것이다. accumulator는 reducing의 모든 단계에서 새로운 값을 생성하기 때문에, 새로운 값의 양은 스트림의 사이즈와 같고 마지막 값만 유용하다. 이것은 퍼포먼스적으로 좋진 않다.
+- combiner
+    accumulator의 결과를 모은다. 서로 다른 스레드에서 accumulators의 결과를 줄이기 위한 병렬모드 일때만 combiner를 호출할 수 있다.
+    
+```java
+    OptionalInt reduced = IntStream.range(1, 4).reduce((a, b) -> a + b);
+```
+reduced = 6(1 + 2 + 3)
+
+```java
+int reducedTwoParams = IntStream.range(1, 4).reduce(10, (a, b) -> a + b);
+```
+reducedTwoParams = 16(10 + 1 + 2 + 3)
+
+```java
+int reducedParams = Stream.of(1, 2, 3)
+								  .reduce(10, (a, b) -> a + b, (a, b) -> {
+									  log.info("combiner was called");
+									  return a + b;
+								  });
+```
+이 결과는 앞에 있는 코드와 같은 결과 16이 나온다 .그리고 로그도 안찍힌다. 이 말은 즉 combiner가 호출되지 않았다는 것이다. combiner를 동작하게 하기 위해 stream이 병렬이 되어야 한다.
+    
+```java
+int reducedParams = Arrays.asList(1, 2, 3).parallelStream()
+								  .reduce(10, (a, b) -> a + b, (a, b) -> {
+									  log.info("combiner was called");
+									  return a + b;
+								  });
+```
+이 
 ### 7.2 collect() 함수
     
 
