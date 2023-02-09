@@ -217,7 +217,8 @@ int reducedParams = Arrays.asList(1, 2, 3).parallelStream()
 ```
 이 
 ### 7.2 collect() 함수
-    
+ stream의 reduction은 또한 또다른 최종 연산자인 collect를 이용해 실행될 수 있다. 이것은 type 컬랙터의 아규먼트를 받는다. 그리고 이 컬렉터는 reduction에 대한 매커니즘을 구체화 한다. 이것은 대부분의 공통 연산자를 위해 collector를 미리 생성하고 미리 정의 한다. collectors 타입의 도움으로 접근할 수 있다.
+
 
 ### 8. Parallel Streams
 자바8 이전에 병렬처리하기 복잡했었다. 
